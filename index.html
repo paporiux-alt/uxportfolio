@@ -675,7 +675,11 @@ section{scroll-margin-top:88px}
 .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:14px 10px;max-width:290px}
 .sw{height:40px;margin-top:8px;border:0;cursor:pointer;transition:transform .5s var(--ease);-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 4px 3px rgba(30,14,2,.45))}
 .sw::before{left:20%;right:20%;top:-6px;height:8px;background-size:100% 100%;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+@media (hover:hover) and (pointer:fine){.sw:hover{transform:translateY(-3px)}}
+.sw:active{transform:translateY(1px);transition-duration:.08s}
 .sw[aria-pressed="true"]{transform:translateY(-6px);outline:2.5px solid #FFF3DC;outline-offset:3px}
+.sw[aria-pressed="true"].picked{animation:swPick .45s var(--ease)}
+@keyframes swPick{0%{transform:translateY(0)}45%{transform:translateY(-11px) scale(1.05,.95)}100%{transform:translateY(-6px)}}
 .sw.erase{--c:rgba(255,250,240,.92);--hi:#fff;--lo:rgba(220,205,180,.9);display:grid;place-items:center;color:#4A2E14}
 .sw.erase::before{display:none}
 .sw.erase svg{width:18px;height:18px}
@@ -707,6 +711,90 @@ section{scroll-margin-top:88px}
 .cell.pop .b{animation:pop .5s var(--ease)}
 .cell:focus-visible{outline:3px solid #fff;outline-offset:-2px;border-radius:8px;z-index:2}
 @keyframes pop{0%{transform:scale(.5)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+/* play corner polish: ghost brick on hover, bricks snap onto the studs and lift off when erased */
+.cell .b{opacity:0;transform:translateY(-30%) scale(.96);transition:opacity .16s ease,transform .22s var(--ease)}
+.cell.filled .b{opacity:1;transform:none;transition:transform .18s var(--ease),filter .18s ease}
+.cell.pop .b{animation:snapOn .42s cubic-bezier(.3,1.2,.5,1)}
+.cell.lift .b{animation:liftOff .34s cubic-bezier(.45,0,.55,1) forwards}
+.cell::before{transition:opacity .2s ease}
+@keyframes snapOn{0%{transform:translateY(-38%) scale(.94);opacity:.55}60%{transform:translateY(5%) scale(1.05,.92);opacity:1}82%{transform:translateY(-2%) scale(.99,1.02)}100%{transform:none;opacity:1}}
+@keyframes liftOff{0%{transform:none;opacity:1}100%{transform:translateY(-55%) scale(.9) rotate(-7deg);opacity:0}}
+@media (hover:hover) and (pointer:fine){
+  .board:not(.erasing) .cell:not(.filled):not(.lift):hover .b{opacity:.6;transform:translateY(-10%)}
+  .board.erasing .cell.filled:hover .b{transform:translateY(-9%) rotate(-3deg);filter:brightness(1.12) saturate(.8)}
+}
+/* play corner in the footer scene's flat brick style: flat face, lit top band, shaded foot, hairline edge, square corners */
+.play-wrap .sw,.play-wrap .cell .b{
+  border-radius:1px;text-shadow:none;
+  background:linear-gradient(180deg,var(--hi) 0 11%,var(--c) 11% 84%,var(--lo) 84% 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+}
+.play-wrap .sw::before,.play-wrap .cell .b::before{
+  -webkit-mask-image:none;mask-image:none;border-radius:1px 1px 0 0;
+  background:linear-gradient(180deg,var(--hi) 0 50%,var(--c) 50% 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+}
+.play-wrap .sw::before{left:30%;right:30%;top:-7px;height:7px}
+.play-wrap .cell .b::before{left:28%;right:28%;top:-12%;height:13%}
+.play-wrap .sw{filter:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 3px 0 rgba(30,14,2,.35)}
+.play-wrap .sw[aria-pressed="true"]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 6px 0 rgba(30,14,2,.3)}
+.play-wrap .board{
+  border-radius:3px;background:var(--pl);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 3px 0 color-mix(in srgb,var(--pl-hi) 60%,var(--pl-lo)),0 12px 0 var(--pl-lo),0 22px 26px -16px rgba(25,12,2,.55);
+}
+.play-wrap .cell::before{
+  inset:18% 18% 26%;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.3) 0 16%,rgba(255,255,255,0) 17%),var(--pl-hi);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),inset 0 -2px 0 rgba(0,0,0,.08),0 4px 0 var(--pl-lo),0 6px 3px -1px rgba(0,0,0,.25);
+}
+/* play corner: one tan baseplate tabletop seen in 3D, board at the back, parts laid out in front */
+#play .play-wrap{display:block;background:none;box-shadow:none;border-radius:0;padding:0}
+#play .play-title{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.12em;margin:0 0 clamp(14px,2.4vw,24px);
+  font:600 clamp(2rem,4.6vw,3.1rem)/1 'Plex Serif Embedded','IBM Plex Serif',Georgia,serif;letter-spacing:-.015em;color:var(--ink);text-shadow:none;text-transform:none}
+.pt-bricks{--u:clamp(24px,3.4vw,32px);display:flex;align-items:flex-end;gap:3px;padding-top:calc(var(--u)*.3)}
+.pt-bricks .gb{width:calc(var(--u)*2);height:calc(var(--u)*2.1);display:grid;place-items:center;cursor:pointer;
+  font:800 calc(var(--u)*1.25)/1 var(--font);letter-spacing:0;
+  color:color-mix(in srgb,var(--c) 36%,#000);
+  text-shadow:0 .025em 0 color-mix(in srgb,var(--c) 55%,#fff),0 -.018em 0 color-mix(in srgb,var(--c) 45%,#000);
+  transform-origin:50% 100%;transition:transform .35s cubic-bezier(.34,1.56,.64,1),filter .2s}
+.pt-bricks .gb.c-blue,.pt-bricks .gb.c-green,.pt-bricks .gb.c-red{color:color-mix(in srgb,var(--c) 28%,#000)}
+.pt-bricks .gb:hover{transform:translateY(-12%) rotate(var(--tw,-2deg));filter:brightness(1.05)}
+.pt-bricks .gb.hop{animation:ptHop .5s cubic-bezier(.3,1,.4,1)}
+@keyframes ptHop{0%{transform:none}35%{transform:translateY(-30%) rotate(var(--tw))}70%{transform:translateY(0) scale(1.05,.94)}100%{transform:none}}
+.pt-word{font-size:.92em;letter-spacing:-.01em;line-height:1;color:var(--ink);margin-top:-.04em}
+
+.pt-stage{perspective:1500px;perspective-origin:50% 0;padding:10px 0 50px}
+.pt-table{
+  --tilt:24deg;--yaw:0deg;
+  position:relative;max-width:760px;margin:0 auto;padding:clamp(26px,4vw,44px) clamp(20px,4vw,48px) clamp(30px,4.4vw,48px);
+  display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3vw,32px);
+  border-radius:6px;background:#E2C88F;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),inset 0 3px 0 rgba(255,255,255,.35),
+    0 6px 0 #C9AC72,0 20px 0 #B0935A,0 21px 0 rgba(0,0,0,.18),0 60px 50px -30px rgba(18,58,104,.5);
+  transform-origin:50% 100%;transform:rotateX(var(--tilt)) rotateY(var(--yaw));
+  transition:transform .7s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .pt-stage:hover .pt-table{--tilt:19deg;--yaw:-1.5deg}
+}
+:root[data-sky="dark"] .pt-table{filter:brightness(.88) saturate(.92)}
+#play .board{order:-1;width:100%;max-width:560px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 3px 0 color-mix(in srgb,var(--pl-hi) 60%,var(--pl-lo)),0 12px 0 var(--pl-lo),0 14px 0 rgba(0,0,0,.18),0 26px 22px -14px rgba(60,40,10,.45)}
+#play .tools{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:560px;padding:0;background:none;border:0;box-shadow:none}
+#play .swatches{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:12px;width:100%;max-width:none}
+#play .presets{justify-content:center;max-width:none;gap:10px}
+.play-wrap .sw{box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 3px 0 rgba(90,60,20,.3)}
+.play-wrap .sw[aria-pressed="true"]{outline:2.5px solid #0D2137;outline-offset:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14),0 8px 0 rgba(90,60,20,.22)}
+#play .preset{width:46px;height:46px;border-radius:4px;background:#FFFDF7;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 4px 0 #B9A67F,0 5px 0 rgba(0,0,0,.12)}
+#play .preset.clear{background:#F3E9D6}
+#play .preset:active{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 #B9A67F}
+#play .preset:focus-visible,#play .sw:focus-visible{outline:2.5px solid #0D2137;outline-offset:3px}
+@media (max-width:900px){
+  .pt-table{--tilt:12deg}
+  #play .swatches{grid-template-columns:repeat(5,minmax(0,1fr))}
+  #play .presets{display:grid;grid-template-columns:repeat(4,46px)}
+}
 
 /* notes */
 .notes{display:grid;grid-template-columns:1.12fr .88fr;gap:24px;align-items:start}
@@ -1593,7 +1681,8 @@ footer{
 <section class="sec" id="play">
   <div class="wrap">
     <div class="play-wrap snap" style="--i:0">
-      <h2 class="h2 h2-marker play-title">Play corner</h2>
+      <h2 class="h2 play-title" aria-label="Play corner"><span class="pt-bricks" aria-hidden="true"><span class="gb c-red" style="--tw:-3deg">P</span><span class="gb c-yellow" style="--tw:2deg">L</span><span class="gb c-blue" style="--tw:-2deg">A</span><span class="gb c-green" style="--tw:3deg">Y</span></span><span class="pt-word" aria-hidden="true">corner</span></h2>
+      <div class="pt-stage"><div class="pt-table">
       <div class="tools">
         <div class="swatches" role="group" aria-label="Brick colors" id="swatches">
           <button class="sw c-red" type="button" data-tool="red" aria-label="Red" aria-pressed="true"></button>
@@ -1619,6 +1708,7 @@ footer{
         </div>
       </div>
       <div class="board" id="board" role="group" aria-label="Brick canvas, 10 by 8 studs"></div>
+      </div></div>
     </div>
   </div>
 </section>
@@ -2073,24 +2163,36 @@ safe(function(){
 /* ---------- play corner ---------- */
 safe(function(){
   var board=document.getElementById('board');if(!board)return;
-  var COLS=10,ROWS=8,N=COLS*ROWS,cells=[],state=[],tool='red',COLORS=['red','orange','yellow','green','azure','blue','pink','black','white'];
+  var COLS=10,ROWS=8,N=COLS*ROWS,cells=[],state=[],lifts=[],tool='red',COLORS=['red','orange','yellow','green','azure','blue','pink','black','white'];
   var NAMES={red:'red',orange:'orange',yellow:'yellow',green:'green',azure:'sky blue',blue:'blue',pink:'pink',black:'black',white:'white'};
+  var timers=[];function cancelTimers(){timers.forEach(clearTimeout);timers=[]}
+  function sfx(k,p){if(window.__brickSfx)window.__brickSfx(k,p)}
+  function pitch(i){return 1+(ROWS-1-Math.floor(i/COLS))*.035} // bricks higher up the plate click a touch higher
   function lab(i){var r=Math.floor(i/COLS)+1,c=i%COLS+1;return 'Row '+r+', column '+c+', '+(state[i]?NAMES[state[i]]+' brick':'empty')}
   for(var i=0;i<N;i++){
     var b=document.createElement('button');b.type='button';b.className='cell';b.tabIndex=i===0?0:-1;b.dataset.i=i;
     b.innerHTML='<span class="b"></span>';state[i]=null;b.setAttribute('aria-label',lab(i));
     board.appendChild(b);cells.push(b);
   }
+  function uncolor(el){COLORS.forEach(function(c){el.classList.remove('c-'+c)})}
+  /* the board carries the current color so the hover ghost brick can preview it */
+  function paintTool(){uncolor(board);if(tool==='erase')board.classList.add('erasing');else{board.classList.remove('erasing');board.classList.add('c-'+tool)}}
+  paintTool();
   function setCell(i,name,anim){
-    var el=cells[i];
-    COLORS.forEach(function(c){el.classList.remove('c-'+c)});
-    if(name){el.classList.add('filled','c-'+name);if(anim){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}}
-    else el.classList.remove('filled','pop');
+    var el=cells[i];clearTimeout(lifts[i]);el.classList.remove('lift');
+    if(name){
+      uncolor(el);el.classList.add('filled','c-'+name);
+      if(anim){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+    }else{
+      el.classList.remove('filled','pop');
+      if(anim&&state[i]){el.classList.add('lift');lifts[i]=setTimeout(function(){el.classList.remove('lift');uncolor(el)},360)}
+      else uncolor(el);
+    }
     state[i]=name||null;el.setAttribute('aria-label',lab(i));
   }
   function act(i){
-    if(tool==='erase'){if(state[i])setCell(i,null)}
-    else if(state[i]!==tool)setCell(i,tool,true);
+    if(tool==='erase'){if(state[i]){setCell(i,null,true);sfx('pick',pitch(i))}}
+    else if(state[i]!==tool){setCell(i,tool,true);sfx('land',pitch(i))}
   }
   var down=false;
   board.addEventListener('pointerdown',function(e){var c=e.target.closest('.cell');if(!c)return;down=true;act(+c.dataset.i)});
@@ -2107,11 +2209,17 @@ safe(function(){
     e.preventDefault();cells[r*COLS+k].focus();
   });
   document.getElementById('swatches').addEventListener('click',function(e){
-    var s=e.target.closest('.sw');if(!s)return;tool=s.dataset.tool;
-    [].forEach.call(this.querySelectorAll('.sw'),function(x){x.setAttribute('aria-pressed',x===s?'true':'false')});
+    var s=e.target.closest('.sw');if(!s)return;tool=s.dataset.tool;paintTool();sfx('tap');
+    [].forEach.call(this.querySelectorAll('.sw'),function(x){x.setAttribute('aria-pressed',x===s?'true':'false');x.classList.remove('picked')});
+    void s.offsetWidth;s.classList.add('picked');
   });
-  function clearAll(){for(var i=0;i<N;i++)if(state[i])setCell(i,null)}
-  document.getElementById('clear').addEventListener('click',clearAll);
+  function filled(){var a=[];for(var i=0;i<N;i++)if(state[i])a.push(i);return a}
+  /* clear: bricks pop off in a diagonal sweep from the top-left corner */
+  document.getElementById('clear').addEventListener('click',function(){
+    cancelTimers();var list=filled();if(!list.length){sfx('tap');return}
+    list.sort(function(a,b){return (Math.floor(a/COLS)+a%COLS)-(Math.floor(b/COLS)+b%COLS)});
+    list.forEach(function(i,n){timers.push(setTimeout(function(){if(state[i]){setCell(i,null,true);if(n%3===0)sfx('pick',pitch(i))}},n*14))});
+  });
   var ART={
     cat:   ['.K......K.','.KK....KK.','.KKKKKKKK.','.KYKKKKYK.','.KKKKKKKK.','WKKKPPKKKW','..KKKKKK..','..........'],
     cow:   ['.Y......Y.','.YWWWKKWY.','KKWWKKWWKK','..WKWWKW..','..WWWWWW..','..PPPPPP..','..PKPPKP..','...PPPP...'],
@@ -2122,11 +2230,18 @@ safe(function(){
     drink: ['......R...','.....R....','..WWWRWW..','..RRRRRR..','..RWWWWR..','...RRRR...','...RRRR...','...WWWW...']
   };
   var MAP={K:'black',Y:'yellow',P:'pink',W:'white',R:'red',O:'orange',G:'green',B:'blue',A:'azure'};
+  [].forEach.call(document.querySelectorAll('.pt-bricks .gb'),function(g,n){
+    g.addEventListener('click',function(){g.classList.remove('hop');void g.offsetWidth;g.classList.add('hop');sfx('land',1+n*.06)});
+  });
   [].forEach.call(document.querySelectorAll('.preset[data-art]'),function(btn){
     btn.addEventListener('click',function(){
       var art=ART[btn.dataset.art];if(!art)return;
-      clearAll();var n=0;
-      art.forEach(function(row,r){row.split('').forEach(function(ch,k){if(MAP[ch]){(function(i,c,d){setTimeout(function(){setCell(i,c,true)},d)})(r*COLS+k,MAP[ch],n*20);n++}})});
+      cancelTimers();var had=filled();
+      had.forEach(function(i){setCell(i,null,true)});sfx(had.length?'pick':'tap');
+      var list=[],start=had.length?220:60,step=24;
+      art.forEach(function(row,r){row.split('').forEach(function(ch,k){if(MAP[ch])list.push([r*COLS+k,MAP[ch]])})});
+      list.forEach(function(o,n){timers.push(setTimeout(function(){setCell(o[0],o[1],true);if(n%3===0)sfx('land',pitch(o[0]))},start+n*step))});
+      timers.push(setTimeout(function(){sfx('done')},start+list.length*step+260));
     });
   });
 });
@@ -2178,23 +2293,31 @@ safe(function(){
     var og=ctx.createGain();og.gain.setValueAtTime(vol*.45,t);og.gain.exponentialRampToValueAtTime(.0001,t+.045);
     o.connect(og).connect(out);o.start(t);o.stop(t+.05);
   }
-  window.__brickSfx=function(kind){
+  /* a soft two-note bell for when a little build finishes */
+  function chime(t,f,vol){
+    var o=ctx.createOscillator();o.type='sine';o.frequency.value=f;
+    var g=ctx.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.38);
+    o.connect(g).connect(out);o.start(t);o.stop(t+.42);
+  }
+  window.__brickSfx=function(kind,p){
     try{
       if(!on||!ctx)return; // silent until the visitor has interacted once
       var now=performance.now();if(now-lastT<55)return;lastT=now;
-      var t=ctx.currentTime+.005,v=.9+Math.random()*.2;
+      var t=ctx.currentTime+.005,v=.9+Math.random()*.2;p=p||1;
       if(kind==='land'){           // clack onto the studs, then a softer settle
-        tick(t,.11*v,3200+Math.random()*700,520+Math.random()*120);
-        tick(t+.028+Math.random()*.012,.04*v,4200,700);
+        tick(t,.11*v,(3200+Math.random()*700)*p,(520+Math.random()*120)*p);
+        tick(t+.028+Math.random()*.012,.04*v,4200*p,700*p);
       }else if(kind==='pick'){     // pulled off the plate
-        tick(t,.06*v,4600,820);
+        tick(t,.06*v,4600*p,820*p);
+      }else if(kind==='done'){     // little build finished
+        chime(t,1046.5,.045);chime(t+.1,1318.5,.04);
       }else{                       // ui tap
         tick(t,.045*v,3800,640);
       }
     }catch(e){}
   };
   ['pointerdown','keydown'].forEach(function(ev){
-    document.addEventListener(ev,function once(){ensure();document.removeEventListener(ev,once)},{once:true,passive:true});
+    document.addEventListener(ev,function(){ensure()},{once:true,passive:true,capture:true}); // capture: unlock before the first click's own sound plays
   });
 });
 
