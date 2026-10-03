@@ -707,13 +707,14 @@ footer{
 .ba-note{position:absolute;top:var(--y);width:clamp(210px,20vw,280px);padding:24px 20px 20px;transform:translateY(-50%) rotate(var(--rot,-1.5deg));
   background:linear-gradient(180deg,#FFF3A6 0%,#FFE873 100%);color:#3A300A;font:700 1.55rem/1.2 var(--font-hand);border-radius:2px;
   box-shadow:0 1px 1px rgba(80,60,0,.12),0 12px 20px -12px rgba(80,60,0,.4)}
-.ba-note.l{right:calc(50% + var(--pw)/2 + 56px);--rot:-1.8deg}
-.ba-note.r{left:calc(50% + var(--pw)/2 + 56px);--rot:1.6deg}
+.ba-note.l{right:calc(50% + var(--pw)/2 + 64px);--rot:-1.8deg}
+.ba-note.r{left:calc(50% + var(--pw)/2 + 64px);--rot:1.6deg}
 .ba-note i{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:8px;border-radius:50%;background:#1C1B1B;color:#FFE873;font:700 .72rem/1 var(--font);font-style:normal;vertical-align:3px}
 .ba-note::before{content:"";position:absolute;top:-9px;left:50%;width:58px;height:18px;margin-left:-29px;background:rgba(255,255,255,.6);box-shadow:0 1px 2px rgba(0,0,0,.08);transform:rotate(-3deg)}
-.ba-note::after{content:"";position:absolute;top:50%;width:56px;border-top:2px dashed rgba(58,48,10,.45)}
-.ba-note.l::after{left:100%}
-.ba-note.r::after{right:100%}
+/* leader: dot on the note, clean line, arrowhead at the pin; counter-rotated so it stays level while the note tilts */
+.ba-note::after{content:"";position:absolute;top:50%;width:44px;height:12px;margin-top:-6px;opacity:.78;transform:rotate(calc(var(--rot) * -1))}
+.ba-note.l::after{left:100%;transform-origin:0 50%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='12' viewBox='0 0 44 12'%3E%3Cg fill='none' stroke='%232B2621' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h36.5'/%3E%3Cpath d='M35.5 1.8 41 6l-5.5 4.2'/%3E%3C/g%3E%3Ccircle cx='3.4' cy='6' r='2.6' fill='%232B2621'/%3E%3C/svg%3E") center/44px 12px no-repeat}
+.ba-note.r::after{right:100%;transform-origin:100% 50%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='12' viewBox='0 0 44 12'%3E%3Cg fill='none' stroke='%232B2621' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6H40'/%3E%3Cpath d='M8.5 1.8 3 6l5.5 4.2'/%3E%3C/g%3E%3Ccircle cx='40.6' cy='6' r='2.6' fill='%232B2621'/%3E%3C/svg%3E") center/44px 12px no-repeat}
 @media (max-width:900px){
   .ba{--pw:min(300px,74vw);padding:32px 14px 28px}
   .ba-stage{height:auto;display:flex;flex-direction:column;align-items:center;gap:26px}
@@ -809,7 +810,7 @@ footer{
 .spot-box{position:relative}
 .spot-box .spot{margin-top:clamp(96px,11vw,140px)}
 .add-arrow{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:2}
-.add-arrow path{fill:none;stroke:#1C1B1B;stroke-width:2;stroke-dasharray:6 6;stroke-linecap:round;opacity:.7}
+.add-arrow path{fill:none;stroke:#1C1B1B;stroke-width:1.8;stroke-dasharray:5 7;stroke-linecap:round;stroke-linejoin:round;opacity:.62}
 .entry-steps{gap:20px}
 .entry-steps li{position:relative;padding:20px 18px 16px;border-radius:2px;align-items:flex-start;
   background:linear-gradient(180deg,#FFF3A6 0%,#FFE873 100%);color:#3A300A;
@@ -1039,6 +1040,27 @@ footer .foot{padding-top:6px}
 .spot-list li.on p{opacity:.8}
 .asks-t{font-size:.85rem;opacity:.8}
 .fact p,.lc p{font-size:.752rem;opacity:.8}
+
+/* walkthrough video under the prototype: thumbnail first, the YouTube player loads only on tap */
+.ytv{max-width:880px;margin:clamp(56px,7vw,88px) auto 0;text-align:center}
+.ytv-h{font:600 clamp(1.3rem,2.4vw,1.7rem)/1.2 var(--font-head);letter-spacing:-.015em;color:var(--ink)}
+.ytv-sub{margin:8px 0 22px}
+.ytv-frame{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;border-radius:8px;overflow:hidden;background:#0f0f0f;cursor:pointer;
+  box-shadow:0 1px 2px rgba(18,58,104,.08),0 24px 50px -28px rgba(18,58,104,.4)}
+.ytv-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease),filter .3s}
+.ytv-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.25));pointer-events:none}
+.ytv-play{position:absolute;left:50%;top:50%;z-index:1;width:68px;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.ytv-play svg{display:block;width:100%;height:auto}
+.ytv-frame:hover img{transform:scale(1.025);filter:brightness(.92)}
+.ytv-frame:hover .ytv-play{transform:translate(-50%,-50%) scale(1.1)}
+.ytv-frame:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+.ytv-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ytv-frame.on{cursor:default}
+.ytv-frame.on::after{display:none}
+.ytv-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:.8rem;font-weight:600;color:var(--muted);text-decoration:none;opacity:.85}
+.ytv-link:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.ytv-link svg{width:14px;height:14px}
+@media (max-width:560px){.ytv-play{width:56px}}
 </style>
 </head>
 <body>
@@ -1126,7 +1148,7 @@ footer .foot{padding-top:6px}
         <h2 class="h2">Problem Statement</h2>
         <p class="lead">Many products on Badho have slab pricing: the more you buy, the lower the price per piece. The quantity modal is where retailers decide how much to buy, so it's the natural place to show these bulk deals.</p>
       </div>
-      <div class="spot-box" id="spotBox"><svg class="add-arrow" id="addArrow" aria-hidden="true"><defs><marker id="ahd" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 8 5 1 9" fill="none" stroke="#1C1B1B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><path id="addArrowPath" marker-end="url(#ahd)"/></svg>
+      <div class="spot-box" id="spotBox"><svg class="add-arrow" id="addArrow" aria-hidden="true"><defs><marker id="ahd" viewBox="0 0 12 12" refX="9.4" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M3 1.8 9.4 6 3 10.2" fill="none" stroke="#1C1B1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs><path id="addArrowPath" marker-end="url(#ahd)"/></svg>
       <div class="entry">
         <div class="entry-card">
           <div class="pc" id="pcCard">
@@ -1283,6 +1305,15 @@ footer .foot{padding-top:6px}
         </div>
       </div>
       <p class="fp-note">Tip: tap the keypad and the slab buttons. Press <b>R</b> to restart.</p>
+      <div class="ytv">
+        <h3 class="ytv-h">Prefer to watch instead?</h3>
+        <p class="cap ytv-sub">Here's a short walkthrough of the new flow in action.</p>
+        <button type="button" class="ytv-frame" id="ytv" data-yt="5wdFHX5JKd4" aria-label="Play the walkthrough video">
+          <img src="https://i.ytimg.com/vi/5wdFHX5JKd4/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" onerror="this.remove()">
+          <span class="ytv-play" aria-hidden="true"><svg viewBox="0 0 68 48"><path d="M66.5 7.7A8.5 8.5 0 0 0 60.5 1.6C55.2.2 34 .2 34 .2s-21.2 0-26.5 1.4A8.5 8.5 0 0 0 1.5 7.7C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6.1C12.8 47.8 34 47.8 34 47.8s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6.1C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#FF0033"/><path d="M27 34.3 44.8 24 27 13.7z" fill="#fff"/></svg></span>
+        </button>
+        <a class="ytv-link" href="https://www.youtube.com/watch?v=5wdFHX5JKd4" target="_blank" rel="noopener">Watch on YouTube <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg><span class="sr">(opens in a new tab)</span></a>
+      </div>
     </div>
   </div>
 
@@ -1565,8 +1596,12 @@ safe(function(){
     var b=box.getBoundingClientRect(),a=add.getBoundingClientRect(),f=fig.getBoundingClientRect(),c=card.getBoundingClientRect(),e=entry.getBoundingClientRect();
     var x1=a.right-b.left+6,y1=a.top+a.height/2-b.top;
     var xr=mq.matches?e.right-b.left-9:c.right-b.left+24;
-    var yb=e.bottom-b.top+28,x2=f.left+f.width/2-b.left,y2=f.top-b.top-12;
-    path.setAttribute('d','M'+x1+' '+y1+' C '+(xr)+' '+y1+', '+xr+' '+y1+', '+xr+' '+(y1+28)+' L '+xr+' '+yb+' C '+xr+' '+(yb+(y2-yb)*.6)+', '+x2+' '+(yb+(y2-yb)*.4)+', '+x2+' '+y2);
+    var yb=e.bottom-b.top+28,x2=f.left+f.width/2-b.left,y2=f.top-b.top-14;
+    var r=Math.min(22,Math.max(8,(xr-x1)*.8)),k=(y2-yb)*.55;
+    /* rounded corner, straight drop, then a smooth S-curve that lands pointing straight down */
+    path.setAttribute('d','M'+x1+' '+y1+' H '+(xr-r)+' Q '+xr+' '+y1+', '+xr+' '+(y1+r)+' V '+yb+' C '+xr+' '+(yb+k)+', '+x2+' '+(y2-k)+', '+x2+' '+y2);
+    /* line the dash rhythm up so the path always ends on a full dash right at the arrowhead */
+    try{var L=path.getTotalLength(),per=12;path.style.strokeDashoffset=(((5-L)%per)+per)%per}catch(e){}
   }
   draw();addEventListener('resize',draw);addEventListener('load',draw);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
@@ -1615,6 +1650,19 @@ safe(function(){
   var b=document.querySelector('.copy-mail');b.addEventListener('click',function(){var m=b.getAttribute('data-mail');
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(function(){toast('Email copied: '+m)},function(){location.href='mailto:'+m})}else location.href='mailto:'+m});
 });
+})();
+</script>
+<script>
+/* walkthrough video: swap the thumbnail for the real player on tap */
+(function(){
+  var b=document.getElementById('ytv');if(!b)return;
+  b.addEventListener('click',function(){
+    var f=document.createElement('iframe');
+    f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0&playsinline=1&modestbranding=1';
+    f.title='Walkthrough of the bulk quantity flow';
+    f.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen');f.setAttribute('allowfullscreen','');
+    var d=document.createElement('div');d.className='ytv-frame on';d.appendChild(f);b.replaceWith(d);
+  });
 })();
 </script>
 </body>
