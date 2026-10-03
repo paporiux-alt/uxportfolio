@@ -587,7 +587,7 @@ footer{
 [data-stack]>*{will-change:transform;background:color-mix(in srgb,var(--c) 16%,#F4F9FE)}
 .stack-track.on{height:190vh}
 .stack-track.on .stack-stick{overflow-x:clip}
-.stack-track.on .stack-stick{position:sticky;top:calc(var(--nav-h) + 30px);min-height:calc(100vh - var(--nav-h) - 60px);display:flex;flex-direction:column;justify-content:center}
+.stack-track.on .stack-stick{position:sticky;top:calc(var(--nav-h) + 30px);display:flex;flex-direction:column}
 .stack-track.on .sec-head{margin-bottom:clamp(28px,4vw,48px)}
 .stack-hint{display:none;text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted)}
 .stack-track:not(.on) .stack-hint{display:none}
@@ -1042,7 +1042,7 @@ footer .foot{padding-top:6px}
 .fact p,.lc p{font-size:.752rem;opacity:.8}
 
 /* walkthrough video under the prototype: thumbnail first, the YouTube player loads only on tap */
-.ytv{max-width:880px;margin:clamp(56px,7vw,88px) auto 0;text-align:center}
+.ytv{max-width:880px;margin:clamp(140px,18vw,240px) auto 0;text-align:center}
 .ytv-h{font:600 clamp(1.3rem,2.4vw,1.7rem)/1.2 var(--font-head);letter-spacing:-.015em;color:var(--ink)}
 .ytv-sub{margin:8px 0 22px}
 .ytv-frame{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;border-radius:8px;overflow:hidden;background:#0f0f0f;cursor:pointer;
@@ -1067,6 +1067,26 @@ footer .foot{padding-top:6px}
 .hero-grid{grid-template-columns:minmax(0,2fr) minmax(0,.72fr);gap:clamp(32px,4vw,56px)}
 .hero h1{font-size:clamp(2.3rem,5vw,3.9rem)}
 @media (max-width:820px){.hero-grid{grid-template-columns:1fr}}
+
+/* flat cards: no drop shadows on any card or sticky note (hairline borders kept) */
+.ytv-frame,.fp,.spot-box,.entry-card,.fact,.lc,.gantt-wrap,.shot.ba,.shot.it,.shot.story,
+.ba-note,.it-note,.entry-steps li,.asks-row span{box-shadow:none!important}
+.goal,.note,.goals2 .goal,[data-stack]>*,.stack-sec .note{box-shadow:0 0 0 1px rgba(90,70,40,.07)!important}
+.note .vis{box-shadow:0 0 0 1px rgba(90,70,40,.10)!important}
+.letter{filter:none!important}
+
+/* iterations + before/after: zoomed out with more breathing room (desktop; mobile layouts unchanged) */
+@media (min-width:901px){
+  .it{--pw:clamp(240px,21vw,310px);padding:clamp(56px,6vw,88px) clamp(48px,7vw,120px) clamp(64px,7vw,104px)}
+  .it-v{font-size:clamp(1.9rem,3.2vw,2.6rem);margin-bottom:clamp(28px,3.4vw,44px)}
+  .it-grid{gap:clamp(28px,4vw,56px)}
+  .it-h{font-size:1.4rem}
+  .it-col{gap:18px}
+  .it-note{width:min(100%,236px);padding:18px 16px 15px;font-size:1.15rem}
+  .it-note b{width:19px;height:19px;font-size:.66rem;margin-right:6px}
+  .ba{--pw:clamp(250px,23vw,330px);padding:clamp(72px,8vw,120px) 40px}
+  .ba-note{width:clamp(190px,16vw,236px);padding:20px 17px 16px;font-size:1.25rem}
+}
 </style>
 </head>
 <body>
@@ -1318,7 +1338,6 @@ footer .foot{padding-top:6px}
           <img src="https://i.ytimg.com/vi/5wdFHX5JKd4/hqdefault.jpg" alt="" loading="lazy" width="480" height="360" onerror="this.remove()">
           <span class="ytv-play" aria-hidden="true"><svg viewBox="0 0 68 48"><path d="M66.5 7.7A8.5 8.5 0 0 0 60.5 1.6C55.2.2 34 .2 34 .2s-21.2 0-26.5 1.4A8.5 8.5 0 0 0 1.5 7.7C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6.1C12.8 47.8 34 47.8 34 47.8s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6.1C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#FF0033"/><path d="M27 34.3 44.8 24 27 13.7z" fill="#fff"/></svg></span>
         </button>
-        <a class="ytv-link" href="https://www.youtube.com/watch?v=5wdFHX5JKd4" target="_blank" rel="noopener">Watch on YouTube <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg><span class="sr">(opens in a new tab)</span></a>
       </div>
     </div>
   </div>
@@ -1536,6 +1555,10 @@ safe(function(){
   function smooth(x){x=clamp(x);return x*x*(3-2*x)}
   function measure(){
     track.classList.toggle('on',!mq.matches);
+    /* pin the block so it sits centred in the viewport, without padding it to full screen height */
+    var stick=track.firstElementChild;stick.style.top='';
+    if(!mq.matches){var nav=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||52;
+      stick.style.top=Math.max(nav+30,(innerHeight-stick.offsetHeight)/2+nav/2)+'px'}
     cards.forEach(function(c){c.style.transform='none'});
     var m=mq.matches?cards[0]:cards[Math.floor((n-1)/2)],x0=m.offsetLeft,y0=m.offsetTop;
     pos=cards.map(function(c){return{dx:x0-c.offsetLeft,dy:y0-c.offsetTop}});
