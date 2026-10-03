@@ -22,14 +22,14 @@
   --font-head:'Fraunces Embedded','Fraunces',Georgia,'Times New Roman',serif;
   --font-hand:'Caveat Embedded','Caveat',cursive;
 
-  --sky:radial-gradient(120% 70% at 82% -12%,rgba(255,255,255,.8),rgba(255,255,255,0) 58%),linear-gradient(180deg,#68AEEB 0%,#98CBF3 38%,#C8E3F8 68%,#EAF5FD 100%);
-  --sky-fallback:#9CCDF3;
-  --cloud-filter:none;--cloud-op:.62;
+  --sky:radial-gradient(120% 60% at 50% -8%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(180deg,#A6D1F4 0%,#C7E3F9 26%,#E2F0FC 52%,#F3F9FE 76%,#FBFDFF 100%);
+  --sky-fallback:#DCEDFB;
+  --cloud-filter:brightness(1.4) saturate(.55);--cloud-op:.75;
 
   --ink:#0D2137; --muted:#1E3550; --focus:#0D2137; --bub:#FFFFFF; --bub-ink:#0D2137; 
   --glass:rgba(255,255,255,.6); --glass-strong:rgba(255,255,255,.78);
   --glass-edge:rgba(255,255,255,.8);
-  --glass-shadow:0 1px 0 rgba(255,255,255,.75) inset,0 30px 60px -28px rgba(18,58,104,.42),0 2px 8px rgba(18,58,104,.08);
+  --glass-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 24px 50px -26px rgba(18,58,104,.28),0 1px 3px rgba(18,58,104,.06);
   --chip:rgba(255,255,255,.7);
   --nav-ind:#fff;
 
@@ -123,7 +123,7 @@ section{scroll-margin-top:88px}
    Glass
    ===================================================== */
 .glass{background:var(--glass);border:1px solid var(--glass-edge);box-shadow:var(--glass-shadow);
-  -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}
+  -webkit-backdrop-filter:blur(26px) saturate(140%);backdrop-filter:blur(26px) saturate(140%)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:var(--glass-strong)}}
 
 /* =====================================================
@@ -953,10 +953,11 @@ footer{
 
 /* sky extras: a soft sun by day, tiny twinkling stars by night */
 .sun{position:absolute;left:50%;top:calc(var(--sun-y,190px) - 320px);margin-left:-320px;width:640px;height:640px;border-radius:50%;transition:opacity 1.2s ease;
-  background:radial-gradient(circle,rgba(255,248,215,.75) 0%,rgba(255,236,170,.36) 22%,rgba(255,232,170,.12) 42%,rgba(255,232,170,0) 62%)}
+  translate:0 calc(var(--sy,0px)*16.6667);
+  background:radial-gradient(circle,rgba(255,253,240,.85) 0%,rgba(255,247,222,.4) 24%,rgba(255,246,225,.12) 44%,rgba(255,246,225,0) 62%)}
 /* a faint warm wash spilling across the sky from the sun */
 .sky::after{content:"";position:absolute;inset:0;pointer-events:none;transition:opacity 1.2s ease;
-  background:radial-gradient(90% 70% at 0% 0%,rgba(255,236,180,.18),rgba(255,236,180,.05) 45%,rgba(255,236,180,0) 70%)}
+  background:radial-gradient(90% 70% at 0% 0%,rgba(255,252,242,.35),rgba(255,252,242,.08) 45%,rgba(255,252,242,0) 70%)}
 :root[data-sky="dark"] .sky::after{opacity:0}
 @media (prefers-color-scheme:dark){:root[data-sky="dark"] .sky::after{opacity:0}}
 .sun::before{content:"";position:absolute;inset:0;border-radius:50%;
