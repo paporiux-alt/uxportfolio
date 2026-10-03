@@ -1061,6 +1061,12 @@ footer .foot{padding-top:6px}
 .ytv-link:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
 .ytv-link svg{width:14px;height:14px}
 @media (max-width:560px){.ytv-play{width:56px}}
+
+/* hero title: more horizontal room so it sits on 3 lines */
+.hero .wrap.wide{max-width:1200px}
+.hero-grid{grid-template-columns:minmax(0,2fr) minmax(0,.72fr);gap:clamp(32px,4vw,56px)}
+.hero h1{font-size:clamp(2.3rem,5vw,3.9rem)}
+@media (max-width:820px){.hero-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
