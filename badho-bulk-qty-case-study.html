@@ -17,8 +17,8 @@
   --font-head:'Fraunces Embedded','Fraunces',Georgia,'Times New Roman',serif;
   --font-plex:'Plex Serif Embedded','IBM Plex Serif',Georgia,serif;
   --font-hand:'Caveat Embedded','Caveat',cursive;
-  --sky:linear-gradient(180deg,#E3F0FC 0%,#E9F4FD 50%,#EFF7FE 100%);
-  --sky-fallback:#E9F4FD;--cloud-op:.75;
+  --sky:radial-gradient(120% 60% at 50% -8%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(180deg,#A6D1F4 0%,#C7E3F9 26%,#E2F0FC 52%,#F3F9FE 76%,#FBFDFF 100%);
+  --sky-fallback:#DCEDFB;--cloud-op:.75;
   --ink:#0D2137;--muted:#1E3550;--focus:#0D2137;
   --paper-ink:#2B2621;--paper-head:#221D18;--paper-muted:#6B6155;--paper-faint:#8A7F70;
   --glass:rgba(255,255,255,.6);--glass-strong:rgba(255,255,255,.78);--glass-edge:rgba(255,255,255,.8);
@@ -1277,6 +1277,40 @@ html:root[data-sky="dark"] body nav.nav.glass{box-shadow:inset 0 8px 14px -10px 
 @media (prefers-reduced-motion:reduce){.impact2.pending .kpi{opacity:1;transform:none}.impact2.pending .kb em{transform:none}}
 @media (max-width:820px){.impact2{grid-template-columns:1fr 1fr}.kpi-hero{grid-column:1 / -1;grid-row:auto}.kpi-wide{grid-column:1 / -1}}
 @media (max-width:520px){.impact2{grid-template-columns:1fr}.kpi-wide{display:flex;flex-direction:column;align-items:stretch}.kpi-wide>*{align-self:stretch}.kpi-wide .kpi-bars{margin:18px 0 0;align-self:stretch;width:100%}}
+
+/* sky identical to the home page */
+.sky::after{content:"";position:absolute;inset:0;pointer-events:none;transition:opacity 1.2s ease;
+  background:radial-gradient(90% 70% at 0% 0%,rgba(255,252,242,.35),rgba(255,252,242,.08) 45%,rgba(255,252,242,0) 70%)}
+
+/* hero: 60px clear space between the text and the phone's colour panel */
+.hp-panel{width:122%!important;transform:translate(-43%,-50%) rotate(-6deg)!important}
+@media (min-width:821px) and (max-width:1000px){.hp-panel{transform:translate(-37%,-50%) rotate(-6deg)!important}}
+@media (min-width:821px){.hero-grid{column-gap:64px!important}}
+
+/* ---------- results: one scoreboard card, brick-coded metrics ---------- */
+.impact3{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:980px;margin:0 auto;padding:0;list-style:none;
+  background:rgba(255,255,255,.8);border:1px solid rgba(13,33,55,.07);border-radius:26px;overflow:hidden}
+.m3{--c:#188049;--cd:#12693B;display:flex;flex-direction:column;padding:clamp(22px,2.6vw,34px) clamp(18px,2.2vw,30px) clamp(24px,2.8vw,34px);border-left:1px solid rgba(13,33,55,.08);
+  transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.m3:first-child{border-left:0}
+.m-green{--c:#188049;--cd:#12693B}.m-blue{--c:#0B5FD6;--cd:#0A4FB0}.m-yellow{--c:#F2B705;--cd:#A9760A}.m-pink{--c:#FF5FA2;--cd:#C93576}
+.m3-head{display:flex;align-items:center;gap:10px}
+.m3-brick{position:relative;flex:none;width:24px;height:13px;margin-top:5px;border-radius:3px;background:var(--c);box-shadow:inset 0 -3px 0 rgba(0,0,0,.14)}
+.m3-brick::before,.m3-brick::after{content:"";position:absolute;top:-4px;width:8px;height:4px;border-radius:2px 2px 0 0;background:var(--c)}
+.m3-brick::before{left:3px}.m3-brick::after{right:3px}
+.m3-lbl{font:700 .98rem/1.25 var(--font);letter-spacing:-.01em;color:var(--ink)}
+.m3 .num{display:block;margin-top:clamp(16px,2vw,24px);font:600 clamp(2.6rem,4.8vw,3.6rem)/1 var(--font-head);letter-spacing:-.035em;color:var(--cd);font-variant-numeric:tabular-nums}
+.m3-note{margin-top:10px;font-size:.84rem;line-height:1.4;color:var(--muted);opacity:.85}
+.impact3.pending .m3{opacity:0;transform:translateY(12px)}
+.impact3.in .m3:nth-child(2){transition-delay:.08s}.impact3.in .m3:nth-child(3){transition-delay:.16s}.impact3.in .m3:nth-child(4){transition-delay:.24s}
+@media (prefers-reduced-motion:reduce){.impact3.pending .m3{opacity:1;transform:none}}
+@media (max-width:820px){.impact3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .m3:nth-child(3){border-left:0}.m3:nth-child(n+3){border-top:1px solid rgba(13,33,55,.08)}}
+@media (max-width:380px){.m3 .num{font-size:2.3rem}}
+
+.impact3{max-width:1080px}
+.m3-head{align-items:flex-start;min-height:calc(2 * 1.25em)}
+@media (min-width:1101px){.m3-head{min-height:0}.m3-lbl{white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -1326,7 +1360,7 @@ html:root[data-sky="dark"] body nav.nav.glass{box-shadow:inset 0 8px 14px -10px 
         <h2 class="h2">The results</h2>
         <p class="lead">2 months before vs 2 months after launch</p>
       </div>
-      <ul class="impact2 pending" id="impact"><li class="kpi kpi-hero"><div class="kpi-top"><span class="kpi-lbl">Avg order value</span><span class="kpi-trend"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"/></svg> Higher</span></div><span class="num" data-to="20" data-pre="+">+20%</span><span class="kpi-note">Each order got bigger once bulk savings were easy to see.</span><span class="kpi-bars" aria-hidden="true"><span class="kb"><i>Before</i><em style="--w:83.3%"></em></span><span class="kb kb-after"><i>After</i><em style="--w:100%"></em></span></span></li><li class="kpi "><div class="kpi-top"><span class="kpi-lbl">Rejected orders</span><span class="kpi-trend"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v8M2.5 6.5 6 10l3.5-3.5"/></svg> Fewer</span></div><span class="num" data-to="12" data-pre="−">−12%</span><span class="kpi-note">Fewer small orders turned down by sellers.</span><span class="kpi-bars" aria-hidden="true"><span class="kb"><i>Before</i><em style="--w:100%"></em></span><span class="kb kb-after"><i>After</i><em style="--w:88%"></em></span></span></li><li class="kpi "><div class="kpi-top"><span class="kpi-lbl">Spend per buyer</span><span class="kpi-trend"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"/></svg> Higher</span></div><span class="num" data-to="4.1" data-pre="+">+4.1%</span><span class="kpi-note">Each retailer spent a little more overall.</span><span class="kpi-bars" aria-hidden="true"><span class="kb"><i>Before</i><em style="--w:96.1%"></em></span><span class="kb kb-after"><i>After</i><em style="--w:100%"></em></span></span></li><li class="kpi kpi-wide"><div class="kpi-top"><span class="kpi-lbl">Total orders</span><span class="kpi-trend"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"/></svg> Higher</span></div><span class="num" data-to="7.5" data-pre="+">+7.5%</span><span class="kpi-note">More orders placed across the platform.</span><span class="kpi-bars" aria-hidden="true"><span class="kb"><i>Before</i><em style="--w:93%"></em></span><span class="kb kb-after"><i>After</i><em style="--w:100%"></em></span></span></li></ul>
+      <ul class="impact3 pending" id="impact"><li class="m3 m-green"><div class="m3-head"><span class="m3-brick" aria-hidden="true"></span><b class="m3-lbl">Avg order value</b></div><span class="num" data-to="20" data-pre="+">+20%</span><span class="m3-note">Bigger baskets per order</span></li><li class="m3 m-blue"><div class="m3-head"><span class="m3-brick" aria-hidden="true"></span><b class="m3-lbl">Rejected orders</b></div><span class="num" data-to="12" data-pre="−">−12%</span><span class="m3-note">Fewer orders turned down</span></li><li class="m3 m-yellow"><div class="m3-head"><span class="m3-brick" aria-hidden="true"></span><b class="m3-lbl">Spend per buyer</b></div><span class="num" data-to="4.1" data-pre="+">+4.1%</span><span class="m3-note">More spent per retailer</span></li><li class="m3 m-pink"><div class="m3-head"><span class="m3-brick" aria-hidden="true"></span><b class="m3-lbl">Total orders</b></div><span class="num" data-to="7.5" data-pre="+">+7.5%</span><span class="m3-note">More orders placed</span></li></ul>
     </div>
   </div>
 
