@@ -1913,6 +1913,30 @@ footer{
 @media (min-width:1000px){.work-info2{margin-top:44px}}
 .work-tags li{background:#E2EEFF;color:#1E4E9C}
 :root[data-sky="dark"] .work-tags li{background:#1C3463;color:#CFE0FF}
+
+/* ===== Pen mode: "Papori" is written out with the pen tool (outline draws letter by letter, then fills) ===== */
+.ov-pen{display:none!important}
+.ov-write{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;opacity:0;z-index:2}
+.hm-title[data-mode="pen"].w-ready .ov-write{opacity:1}
+.hm-title[data-mode="pen"].w-ready .hm-name{color:transparent}
+.ov-write .wl{fill:transparent;stroke:#2F7CF6;stroke-width:1.4;stroke-linejoin:round;stroke-dasharray:900;stroke-dashoffset:900}
+.hm-title[data-mode="pen"].w-ready.play .wl{animation:wDraw 1s cubic-bezier(.55,0,.35,1) var(--dl) forwards,wFill .55s ease calc(var(--dl) + .8s) forwards}
+@keyframes wDraw{to{stroke-dashoffset:0}}
+@keyframes wFill{to{fill:var(--ink,#0D2137);stroke:rgba(47,124,246,0)}}
+.ov-write .wa{fill:#fff;stroke:#2F7CF6;stroke-width:1.3;opacity:0}
+.hm-title[data-mode="pen"].w-ready.play .wa{animation:hmFade .3s ease var(--dl) forwards}
+.ov-write .wnib{opacity:0}
+.hm-title[data-mode="pen"].w-ready.play .wnib{animation:wNib var(--tot) linear .05s forwards}
+@keyframes wNib{0%{opacity:1;transform:translate(var(--x0),var(--y0))}92%{opacity:1;transform:translate(var(--x1),var(--y0))}100%{opacity:1;transform:translate(var(--x1),var(--y0))}}
+@media (prefers-reduced-motion:reduce){.hm-title[data-mode="pen"].w-ready.play .wl{animation:none;fill:var(--ink,#0D2137);stroke:none}.hm-title .wnib{display:none}.hm-title.play .wa{animation:none;opacity:1}}
+
+/* no pen nib over the name while it is being written */
+.ov-write .wnib{display:none!important}
+
+/* anchor points show while each letter is drawn, then disappear once it fills */
+.hm-title[data-mode="pen"].w-ready.play .wa{animation:waLife 1.7s ease var(--dl) forwards}
+@keyframes waLife{0%{opacity:0}12%{opacity:1}72%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hm-title.play .wa{animation:none!important;opacity:0!important}}
 </style>
 </head>
 <body>
@@ -1963,6 +1987,7 @@ footer{
         <span class="ov ov-frame" aria-hidden="true"><span class="ov-tag">Frame 1</span><span class="ov-h tl"></span><span class="ov-h tr"></span><span class="ov-h bl"></span><span class="ov-h br"></span><span class="ov-size"></span></span>
         <span class="ov ov-rect" aria-hidden="true"><span class="ov-h tl"></span><span class="ov-h tr"></span><span class="ov-h bl"></span><span class="ov-h br"></span><span class="ov-rad"></span><span class="ov-size"></span></span>
         <h1 class="hm-name">Papori<span class="ov-caret" aria-hidden="true"></span></h1>
+        <svg class="ov-write" aria-hidden="true"></svg>
         <svg class="ov ov-pen" viewBox="0 0 360 100" aria-hidden="true">
           <path class="hm-curve" pathLength="1" d="M8 62 C 90 30, 150 92, 190 72 S 300 34, 352 56"/>
           <g class="hm-handles"><path d="M150 92 L230 52"/><circle cx="150" cy="92" r="3.5"/><circle cx="230" cy="52" r="3.5"/></g>
@@ -3166,6 +3191,42 @@ el.addEventListener('animationend',function(e){if(e.animationName==='stkIn'){el.
 w.addEventListener('click',function(e){var o=w.classList.contains('open');ws.forEach(function(x){x.classList.remove('open')});if(!o)w.classList.add('open');e.stopPropagation()});
 w.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();w.click()}if(e.key==='Escape')w.classList.remove('open')})});
 document.addEventListener('click',function(){ws.forEach(function(x){x.classList.remove('open')})});})();
+</script>
+<script>
+(function(){
+var title=document.getElementById('hmTitle');if(!title)return;var h1=title.querySelector('.hm-name'),svg=title.querySelector('.ov-write');if(!h1||!svg)return;
+var NS='http://www.w3.org/2000/svg';
+function build(){
+  var cs=getComputedStyle(h1),fs=parseFloat(cs.fontSize);if(!fs)return;
+  var word=(h1.firstChild&&h1.firstChild.nodeValue||'Papori').trim();
+  var c=document.createElement('canvas').getContext('2d');c.font=cs.fontStyle+' '+cs.fontWeight+' '+fs+'px '+cs.fontFamily;
+  var ls=parseFloat(cs.letterSpacing)||0,m=c.measureText(word),asc=m.fontBoundingBoxAscent||fs*.9,dsc=m.fontBoundingBoxDescent||fs*.25;
+  var padL=parseFloat(cs.paddingLeft)||0,padT=parseFloat(cs.paddingTop)||0,lh=parseFloat(cs.lineHeight)||fs;
+  var w=h1.offsetWidth,h=h1.offsetHeight;
+  var total=c.measureText(word).width+ls*word.length,startX=padL+((h1.clientWidth-padL-parseFloat(cs.paddingRight||0))-total)/2;
+  if(cs.textAlign!=='center')startX=padL;
+  var base=padT+(lh-(asc+dsc))/2+asc;
+  svg.setAttribute('width',w);svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.innerHTML='';
+  var x=startX,per=.22,dur=1;
+  for(var i=0;i<word.length;i++){
+    var ch=word[i],t=document.createElementNS(NS,'text');
+    t.setAttribute('x',x.toFixed(2));t.setAttribute('y',base.toFixed(2));t.setAttribute('class','wl');t.textContent=ch;
+    t.style.font=cs.fontStyle+' '+cs.fontWeight+' '+fs+'px '+cs.fontFamily;t.style.setProperty('--dl',(i*per)+'s');
+    svg.appendChild(t);
+    var a=document.createElementNS(NS,'rect');a.setAttribute('x',(x-3.5).toFixed(1));a.setAttribute('y',(base-3.5).toFixed(1));a.setAttribute('width',7);a.setAttribute('height',7);a.setAttribute('class','wa');a.style.setProperty('--dl',(i*per)+'s');svg.appendChild(a);
+    x+=c.measureText(ch).width+ls;
+  }
+  var a2=document.createElementNS(NS,'rect');a2.setAttribute('x',(x-3.5).toFixed(1));a2.setAttribute('y',(base-3.5).toFixed(1));a2.setAttribute('width',7);a2.setAttribute('height',7);a2.setAttribute('class','wa');a2.style.setProperty('--dl',((word.length-1)*per+dur*.9)+'s');svg.appendChild(a2);
+  var g=document.createElementNS(NS,'g');g.setAttribute('class','wnib');
+  g.innerHTML='<g transform="translate(-3 -21) scale(1)"><path d="M3 21l2.6-8.6L14 4l6 6-8.4 8.4z" fill="#fff" stroke="#1B2A34" stroke-width="1.4" stroke-linejoin="round"/><path d="M3 21l6.2-6.2" stroke="#1B2A34" stroke-width="1.4" stroke-linecap="round"/><circle cx="10.4" cy="13.6" r="1.6" fill="#1B2A34"/></g>';
+  g.style.setProperty('--x0',startX+'px');g.style.setProperty('--x1',x+'px');g.style.setProperty('--y0',(base-fs*.35)+'px');
+  g.style.setProperty('--tot',((word.length-1)*per+dur)+'s');svg.appendChild(g);
+  title.classList.add('w-ready');
+}
+function rebuild(){build();}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(rebuild);else rebuild();
+var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(rebuild,120)});
+})();
 </script>
 </body>
 </html>
